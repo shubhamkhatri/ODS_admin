@@ -1,10 +1,12 @@
 package com.shubham.odsadmin.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +25,7 @@ import com.shubham.odsadmin.adapter.BillAdapter;
 import com.shubham.odsadmin.model.billList;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class BillPendingActivity extends AppCompatActivity {
 
@@ -53,6 +56,7 @@ public class BillPendingActivity extends AppCompatActivity {
 
         db.collection("bills").whereEqualTo("Status","Unpaid").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
@@ -66,6 +70,7 @@ public class BillPendingActivity extends AppCompatActivity {
                                 bill.add(new billList(Phone,Type,Date,Amount,Id));
 
                             }
+                            bill.sort(Comparator.comparing(o -> o.getDate()));
 
                             if (bill.size() > 0)
                                 nothing.setVisibility(View.GONE);
